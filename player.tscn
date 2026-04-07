@@ -150,7 +150,7 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="Player" type="Node2D"]
+[node name="PlayerRootNode" type="Node2D"]
 script = ExtResource("1_onrkg")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
