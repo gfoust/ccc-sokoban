@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://gl3rcjr4bbn6" path="res://box.gd" id="1_oq5cr"]
 [ext_resource type="Texture2D" uid="uid://cuks1tm0mhvgh" path="res://sokoban_tilesheet.png" id="2_bqn3j"]
 
-[node name="Box" type="Node2D"]
+[node name="Box" type="Node2D" groups=["boxes"]]
 script = ExtResource("1_oq5cr")
 
-[node name="Sprite2D" type="Sprite2D" parent="." groups=["boxes"]]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(32, 32)
 texture = ExtResource("2_bqn3j")
 hframes = 13

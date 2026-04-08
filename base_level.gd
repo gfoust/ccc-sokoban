@@ -8,9 +8,10 @@ var walls: TileMapLayer = $Walls
 
 var player_can_move = true
 
+
 func _ready():
 	player.move_finished.connect(on_player_move_finished)
-	
+
 
 func _input(event: InputEvent):
 	if not player_can_move:
@@ -26,32 +27,68 @@ func _input(event: InputEvent):
 	if Input.is_action_pressed("move_down"):
 		dir = "move_down"
 
-	if dir and player_can_move_in_direction(dir):
-		player.move_in_direction(dir)
-		player_can_move = false
+#===============================================================================
+# CHANGED CODE
+
+	if dir != null:
+		var move_result = player_can_move_in_direction(dir)
+		if move_result != null:
+			player_can_move = false
+			player.move_in_direction(dir)
+			for box in move_result:
+				box.move_in_direction(dir)
 
 
-func player_can_move_in_direction(dir):
-	var player_tile_coords = Vector2(
-		player.get_tile_coords_x(), 
-		player.get_tile_coords_y()
-	)
-	var destination_tile_coords = coords_in_dir(player_tile_coords, dir)
-	if walls.get_cell_tile_data(destination_tile_coords):
-		return false
-		
+# return the tile data for the given coordinates
+#     or null if there is no tile there
+func wall_at_coords(coords):
+	return walls.get_cell_tile_data(coords)
+
+
+# return the box for the given coordinates
+#     or null if there is no box there
+func box_at_coords(coords):
 	for box in get_tree().get_nodes_in_group("boxes"):
-		var box_tile_coords = Vector2(
-			box.get_tile_coords_x(),
-			box.get_tile_coords_y()
-		)
-		if box_tile_coords == destination_tile_coords:
-			var box_destination_tile_coords = coords_in_dir(box_tile_coords, dir)
-			if walls.get_cell_tile_data(box_destination_tile_coords):
-				return false
-	
-	return true
+		var box_coords = box.get_tile_coords()
+		if box_coords == coords:
+			return box
+	return null
 
+
+# return true if box can move in the given direction
+#     or false if it cannot
+func box_can_move_in_direction(box, dir):
+	var box_coords = box.get_tile_coords()
+	var destination_coords = coords_in_dir(box_coords, dir)
+	if wall_at_coords(destination_coords) or box_at_coords(destination_coords):
+		return false
+	else:
+		return true
+		
+
+# return the list of boxes the player would push if he goes in the given direction
+#     or null if the player cannot move in that direction
+#        (the list will be empty if the player does not push any boxes)
+func player_can_move_in_direction(dir):
+	var player_coords = player.get_tile_coords()
+	var destination_coords = coords_in_dir(player_coords, dir)
+	
+	var wall = wall_at_coords(destination_coords)
+	if wall != null:
+		return null # we cannot move: there is a wall there
+		
+	var box = box_at_coords(destination_coords)
+	if box != null:
+		if box_can_move_in_direction(box, dir):
+			return [box] # a list of one thing: the box we're pushing
+		else:
+			return null # we cannot move: there is a box there we cannot push
+	
+	return [] # an empty list: we're not pushing any boxes
+
+
+# REMAINING CODE IS THE SAME	
+#===============================================================================
 
 func coords_in_dir(coords: Vector2, dir: String):
 	if dir == "move_left":

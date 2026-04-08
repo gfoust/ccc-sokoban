@@ -1,7 +1,7 @@
 extends Node2D
 
 var move_distance = 64
-var move_time = 0.5
+var move_time = 0.4
 
 signal move_finished()
 
@@ -41,3 +41,9 @@ func get_tile_coords_x():
 func get_tile_coords_y():
 	var y_coord = round(position.y / 64)
 	return y_coord
+
+
+func get_tile_coords():
+	var x_coord = round(position.x / 64)
+	var y_coord = round(position.y / 64)
+	return Vector2(x_coord, y_coord)
