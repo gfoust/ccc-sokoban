@@ -29,5 +29,5 @@ size_flags_horizontal = 4
 text = "You Win!"
 label_settings = SubResource("LabelSettings_wmwda")
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="WinMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_1txte")

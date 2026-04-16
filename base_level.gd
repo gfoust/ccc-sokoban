@@ -20,6 +20,7 @@ var goals_to_win := 0
 
 var moving_things_count = 0
 
+var game_over = false
 
 ########
 # Functions that Godot will call for us
@@ -45,7 +46,7 @@ func _input(_event: InputEvent):
 
 # Check to see if arrow key is being pressed and move the player if it is
 func check_for_move():
-	if moving_things_count > 0:
+	if game_over or moving_things_count > 0:
 		return
 		
 	var dir
@@ -71,7 +72,7 @@ func check_for_move():
 			player.move_in_direction(dir)
 			moving_things_count += 1
 			for box in moved_boxes:
-				if targets.get_cell_tile_data(box.get_tile_coords()):
+				if box_on_target(box):
 					goals_to_win += 1
 				box.move_in_direction(dir)
 				moving_things_count += 1
@@ -137,14 +138,26 @@ func coords_in_dir(coords: Vector2, dir: String):
 	return coords
 
 
+func box_on_target(box):
+	var atlas_coords = targets.get_cell_atlas_coords(box.get_tile_coords())
+	if atlas_coords.y == 3:
+		if atlas_coords.x == 0 or atlas_coords.x == box.shade:
+			return true
+	return false
+	
+
 func on_player_move_finished():
 	moving_things_count -= 1
 	check_for_move()
 
 
 func on_box_move_finished(box):
-	if targets.get_cell_tile_data(box.get_tile_coords()):
+	if box_on_target(box):
+		box.shine()
 		goals_to_win -= 1
-		print("Goal reached! %d left." % [goals_to_win])
+		if goals_to_win == 0:
+			$WinScreen.go()
+			game_over = true
+			player.stop_moving()
 	moving_things_count -= 1
 	check_for_move()
