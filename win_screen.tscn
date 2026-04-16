@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://binku0lbnggrf"]
+
+[ext_resource type="FontFile" uid="uid://c2eenkn71ocqn" path="res://hero-speak.ttf" id="1_l2arl"]
+[ext_resource type="Script" uid="uid://ch7771m1a74ak" path="res://win_screen.gd" id="1_l5t5q"]
+[ext_resource type="AudioStream" uid="uid://cxhl781n0u30t" path="res://success.wav" id="3_1txte"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wmwda"]
+font = ExtResource("1_l2arl")
+font_size = 192
+font_color = Color(0.16498923, 0.7394274, 0.5047359, 1)
+outline_size = 12
+
+[node name="WinScreen" type="CanvasLayer"]
+script = ExtResource("1_l5t5q")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -315.0
+offset_top = -103.0
+offset_right = 315.0
+offset_bottom = 103.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "You Win!"
+label_settings = SubResource("LabelSettings_wmwda")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_1txte")

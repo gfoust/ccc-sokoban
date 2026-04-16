@@ -13,7 +13,7 @@ config_version=5
 config/name="Sokoban"
 run/main_scene="uid://c3w2ocwb28xum"
 config/features=PackedStringArray("4.5", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://icon.png"
 
 [display]
 
@@ -59,3 +59,5 @@ moonwalk={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

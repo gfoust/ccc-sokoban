@@ -3,7 +3,7 @@ class_name Player
 extends Node2D
 
 var move_distance = 64
-var move_time = 0.4
+var move_time = 0.25
 
 @onready
 var animated_sprite = $AnimatedSprite2D
@@ -50,12 +50,12 @@ func move_in_direction(dir: String):
 		return false
 
 
+func stop_moving():
+	animated_sprite.stop()
+
 
 func on_tween_finished():
 	move_finished.emit()
-	animated_sprite.stop()
-	#if not try_to_make_player_move():
-		#can_move = true
 
 
 func get_tile_coords_x():

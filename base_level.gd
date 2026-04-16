@@ -1,22 +1,53 @@
 extends Node2D
 
+########
+# Objects from our scene that we want to be able to access
+# (so we store them in variables)
+
 @onready
 var player: Player = $Player
 
 @onready
-var walls: TileMapLayer = $Walls
+var walls: TileMapLayer = $Map/Walls
 
-var player_can_move = true
+@onready
+var targets: TileMapLayer = $Map/Targets
+
+########
+# Other things our game needs to keep track of
+
+var goals_to_win := 0
+
+var moving_things_count = 0
 
 
+########
+# Functions that Godot will call for us
+
+# Called one time once the scene is ready
 func _ready():
+	# Listen for player's "move_finished" signal
 	player.move_finished.connect(on_player_move_finished)
+	# Listen for all the boxes' "move_finished" signals
+	for box in get_tree().get_nodes_in_group("boxes"):
+		box.move_finished.connect(on_box_move_finished)
+	# Count how many targets there are
+	goals_to_win = targets.get_used_cells().size()
 
 
-func _input(event: InputEvent):
-	if not player_can_move:
+# Called any time the user presses (or releases) a key
+func _input(_event: InputEvent):
+	check_for_move()
+
+
+########
+# Functions that decide who moves where and when
+
+# Check to see if arrow key is being pressed and move the player if it is
+func check_for_move():
+	if moving_things_count > 0:
 		return
-	
+		
 	var dir
 	if Input.is_action_pressed("move_left"):
 		dir = "move_left"
@@ -27,16 +58,23 @@ func _input(event: InputEvent):
 	if Input.is_action_pressed("move_down"):
 		dir = "move_down"
 
-#===============================================================================
-# CHANGED CODE
-
-	if dir != null:
-		var move_result = player_can_move_in_direction(dir)
-		if move_result != null:
-			player_can_move = false
+	if dir == null:
+		# The user isn't pressing any keys
+		player.stop_moving()
+	else:
+		var moved_boxes = player_can_move_in_direction(dir)
+		if moved_boxes == null:
+			# We can't move in the direction the user wants to go
+			player.stop_moving()
+		else:
+			# We can move in the direction the user wants us to go
 			player.move_in_direction(dir)
-			for box in move_result:
+			moving_things_count += 1
+			for box in moved_boxes:
+				if targets.get_cell_tile_data(box.get_tile_coords()):
+					goals_to_win += 1
 				box.move_in_direction(dir)
+				moving_things_count += 1
 
 
 # return the tile data for the given coordinates
@@ -87,9 +125,6 @@ func player_can_move_in_direction(dir):
 	return [] # an empty list: we're not pushing any boxes
 
 
-# REMAINING CODE IS THE SAME	
-#===============================================================================
-
 func coords_in_dir(coords: Vector2, dir: String):
 	if dir == "move_left":
 		return Vector2(coords.x - 1, coords.y)
@@ -103,4 +138,13 @@ func coords_in_dir(coords: Vector2, dir: String):
 
 
 func on_player_move_finished():
-	player_can_move = true;
+	moving_things_count -= 1
+	check_for_move()
+
+
+func on_box_move_finished(box):
+	if targets.get_cell_tile_data(box.get_tile_coords()):
+		goals_to_win -= 1
+		print("Goal reached! %d left." % [goals_to_win])
+	moving_things_count -= 1
+	check_for_move()

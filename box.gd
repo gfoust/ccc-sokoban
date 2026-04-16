@@ -1,9 +1,9 @@
 extends Node2D
 
 var move_distance = 64
-var move_time = 0.4
+var move_time = 0.25
 
-signal move_finished()
+signal move_finished(box)
 
 
 func move_in_direction(dir: String):
@@ -30,7 +30,7 @@ func move_in_direction(dir: String):
 
 
 func on_tween_finished():
-	move_finished.emit()
+	move_finished.emit(self)
 	
 
 func get_tile_coords_x():
