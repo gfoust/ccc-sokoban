@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://c3w2ocwb28xum"]
+[gd_scene load_steps=11 format=3 uid="uid://c3w2ocwb28xum"]
 
 [ext_resource type="PackedScene" uid="uid://b6vfn63n64iid" path="res://player.tscn" id="1_bo3yr"]
 [ext_resource type="Script" uid="uid://b1u1msp8gsice" path="res://base_level.gd" id="1_eesb3"]
 [ext_resource type="Texture2D" uid="uid://cuks1tm0mhvgh" path="res://sokoban_tilesheet.png" id="2_5vx1e"]
+[ext_resource type="PackedScene" uid="uid://binku0lbnggrf" path="res://win_screen.tscn" id="4_3o4py"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_eesb3"]
 texture = ExtResource("2_5vx1e")
@@ -63,3 +64,6 @@ tile_set = SubResource("TileSet_ftfrf")
 position = Vector2(64, 64)
 
 [node name="Boxes" type="Node2D" parent="."]
+
+[node name="WinScreen" parent="." instance=ExtResource("4_3o4py")]
+visible = false
